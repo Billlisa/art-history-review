@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>艺术史复习 App</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="panel panel-left">
+        <h1>艺术史复习</h1>
+        <p class="subtitle">逐张浏览 + 点击看详情 + 分类 + 两图比较</p>
+
+        <div class="control-group">
+          <label for="searchInput">关键词</label>
+          <input id="searchInput" type="text" placeholder="标题 / 作者 / 地区 / 风格 / 材质 / 时期" />
+        </div>
+
+        <div class="control-grid">
+          <div class="control-group">
+            <label for="deckFilter">课程</label>
+            <select id="deckFilter"></select>
+          </div>
+          <div class="control-group">
+            <label for="recordTypeFilter">条目类型</label>
+            <select id="recordTypeFilter"></select>
+          </div>
+          <div class="control-group">
+            <label for="regionFilter">地区</label>
+            <select id="regionFilter"></select>
+          </div>
+          <div class="control-group">
+            <label for="styleFilter">风格</label>
+            <select id="styleFilter"></select>
+          </div>
+          <div class="control-group">
+            <label for="categoryFilter">分类标签</label>
+            <select id="categoryFilter"></select>
+          </div>
+        </div>
+
+        <button id="resetFiltersBtn" class="ghost">重置筛选</button>
+        <a class="table-link" href="data/comparison_table.csv" target="_blank" rel="noopener">打开对比表格（CSV）</a>
+      </aside>
+
+      <main class="viewer">
+        <div class="viewer-top">
+          <button id="prevBtn" class="nav">上一张</button>
+          <div id="counter">0 / 0</div>
+          <button id="nextBtn" class="nav">下一张</button>
+        </div>
+
+        <figure id="imageStage" class="image-stage" title="点击图片查看详情">
+          <img id="currentImage" alt="当前作品" />
+          <figcaption>
+            <h2 id="titleText"></h2>
+            <p id="metaText"></p>
+            <p id="studyText" class="study-text"></p>
+          </figcaption>
+        </figure>
+
+        <div class="quick-tags" id="quickTags"></div>
+      </main>
+
+      <aside class="panel panel-right">
+        <h3>两图比较</h3>
+        <div class="control-group">
+          <label for="compareA">图片 A</label>
+          <select id="compareA"></select>
+        </div>
+        <div class="control-group">
+          <label for="compareB">图片 B</label>
+          <select id="compareB"></select>
+        </div>
+
+        <div id="comparePreview" class="compare-preview"></div>
+        <div id="compareHints" class="compare-hints"></div>
+
+        <div class="control-group">
+          <label for="differenceNote">你写出的区别</label>
+          <textarea id="differenceNote" rows="8" placeholder="建议至少从：形式语言、材质工艺、时期语境这三层写差异"></textarea>
+        </div>
+        <button id="saveNoteBtn">保存比较笔记</button>
+
+        <div class="saved-title">已保存比较</div>
+        <ul id="savedNotes" class="saved-notes"></ul>
+      </aside>
+    </div>
+
+    <dialog id="detailDialog">
+      <form method="dialog" class="detail-form">
+        <div class="detail-head">
+          <h3 id="detailTitle"></h3>
+          <button value="cancel" class="ghost">关闭</button>
+        </div>
+
+        <img id="detailImage" alt="详情图" class="detail-image" />
+
+        <div class="control-grid detail-grid">
+          <div class="control-group">
+            <label for="yearInput">年份</label>
+            <input id="yearInput" type="text" />
+          </div>
+          <div class="control-group">
+            <label for="periodInput">时期</label>
+            <input id="periodInput" type="text" />
+          </div>
+          <div class="control-group">
+            <label for="authorInput">作者</label>
+            <input id="authorInput" type="text" />
+          </div>
+          <div class="control-group">
+            <label for="productionPlaceInput">生产地</label>
+            <input id="productionPlaceInput" type="text" />
+          </div>
+          <div class="control-group">
+            <label for="regionInput">地区</label>
+            <input id="regionInput" type="text" />
+          </div>
+          <div class="control-group">
+            <label for="styleInput">风格</label>
+            <input id="styleInput" type="text" />
+          </div>
+          <div class="control-group full-width">
+            <label for="materialInput">材质</label>
+            <input id="materialInput" type="text" />
+          </div>
+          <div class="control-group full-width">
+            <label for="historicalBackgroundZhInput">历史背景（中文）</label>
+            <textarea id="historicalBackgroundZhInput" rows="3"></textarea>
+          </div>
+          <div class="control-group full-width">
+            <label for="historicalBackgroundEnInput">Historical Background (English)</label>
+            <textarea id="historicalBackgroundEnInput" rows="3"></textarea>
+          </div>
+          <div class="control-group full-width">
+            <label for="backgroundSourcesText">历史背景来源（自动联网整理）</label>
+            <textarea id="backgroundSourcesText" rows="3" readonly></textarea>
+            <div id="backgroundSourcesLinks" class="source-links"></div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="newCategoryInput">给这张图新增分类</label>
+          <div class="category-row">
+            <input id="newCategoryInput" type="text" placeholder="如：Napoleonic / 家具设计 / 金属工艺" />
+            <button id="addCategoryBtn" type="button" class="ghost">添加</button>
+          </div>
+        </div>
+
+        <div id="detailCategories" class="quick-tags"></div>
+
+        <div class="control-group">
+          <label for="studyDescriptionText">结构化描述（自动生成）</label>
+          <textarea id="studyDescriptionText" rows="4" readonly></textarea>
+        </div>
+
+        <div class="control-group">
+          <label for="descriptionText">原始说明（自动抽取）</label>
+          <textarea id="descriptionText" rows="4" readonly></textarea>
+        </div>
+
+        <div class="detail-actions">
+          <button id="saveDetailBtn" type="button">保存这张图的信息</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
